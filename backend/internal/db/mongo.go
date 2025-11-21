@@ -20,6 +20,8 @@ var (
 	usersSetupErr  error
 )
 
+const defaultDBName = "event_blog"
+
 func getMongoURL() (string, error) {
 	url := os.Getenv("MONGO_URL")
 	if url == "" {
@@ -32,7 +34,7 @@ func dbName() string {
 	if name := os.Getenv("MONGO_DB_NAME"); name != "" {
 		return name
 	}
-	return os.Getenv("db_name")
+	return defaultDBName
 }
 
 func mongoTimeoutContext(ctx context.Context) (context.Context, context.CancelFunc) {
@@ -106,4 +108,26 @@ func UsersCollection(ctx context.Context) (*mongo.Collection, error) {
 	}
 
 	return database.Collection("users"), nil
+}
+
+// EventsCollection returns the events collection, creating it if missing.
+func EventsCollection(ctx context.Context) (*mongo.Collection, error) {
+	c, err := Client(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	database := c.Database(dbName())
+
+	names, err := database.ListCollectionNames(ctx, bson.D{{Key: "name", Value: "events"}})
+	if err != nil {
+		return nil, err
+	}
+	if len(names) == 0 {
+		if err := database.CreateCollection(ctx, "events"); err != nil {
+			return nil, err
+		}
+	}
+
+	return database.Collection("events"), nil
 }

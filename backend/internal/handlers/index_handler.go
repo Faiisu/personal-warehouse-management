@@ -26,6 +26,16 @@ func APIIndex(c *fiber.Ctx) error {
 			"path":        "/api/login",
 			"description": "Login user with email and password",
 		},
+		{
+			"method":      "POST",
+			"path":        "/api/events",
+			"description": "Create a new event",
+		},
+		{
+			"method":      "GET",
+			"path":        "/api/events",
+			"description": "List events",
+		},
 	}
 
 	return c.JSON(fiber.Map{

@@ -11,4 +11,6 @@ func RegisterRoutes(app *fiber.App) {
 	app.Get("/api/health", handlers.HealthCheck)
 	app.Post("/api/register", handlers.RegisterUser)
 	app.Post("/api/login", handlers.LoginUser)
+	app.Get("/api/events", handlers.ListEvents)
+	app.Post("/api/events", handlers.CreateEvent)
 }
