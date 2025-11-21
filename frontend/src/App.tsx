@@ -81,6 +81,8 @@ function App() {
       normalizedPath !== '/' &&
       normalizedPath !== '/stocks' &&
       normalizedPath !== '/stocks/' &&
+      normalizedPath !== '/login' &&
+      normalizedPath !== '/login/' &&
       !normalizedPath.startsWith('/stocks/')
     ) {
       const suffix = pathname.startsWith('/') ? pathname : `/${pathname}`
