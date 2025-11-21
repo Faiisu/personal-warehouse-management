@@ -33,7 +33,7 @@ func main() {
 
 	app.Use(logger.New())
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: "http://localhost:5173", // Vite URL
+		AllowOrigins: "*", // Vite URL
 		AllowHeaders: "Origin, Content-Type, Accept",
 	}))
 

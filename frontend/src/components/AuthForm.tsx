@@ -1,6 +1,10 @@
 import { type FormEvent, useMemo, useState } from 'react'
 import type { AuthForm, AuthMode } from '../types/auth'
 
+type AuthFormProps = {
+  onLoginSuccess?: (data?: unknown, context?: { email: string }) => void
+}
+
 const emptyForm: AuthForm = {
   email: '',
   password: '',
@@ -8,12 +12,22 @@ const emptyForm: AuthForm = {
   confirmPassword: '',
 }
 
-const apiRoutes = {
-  login: '/api/login',
-  signup: '/api/register',
+const normalizeBackendUrl = (host?: string) => {
+  if (!host) return ''
+  const trimmed = host.trim().replace(/\/+$/, '')
+  return trimmed.startsWith('http') ? trimmed : `http://${trimmed}`
 }
 
-function AuthFormCard() {
+const env = import.meta.env as Record<string, string | undefined>
+const backendHost = env.backend_ip ?? env.VITE_BACKEND_IP
+const backendBaseUrl = normalizeBackendUrl(backendHost)
+
+const apiRoutes = {
+  login: backendBaseUrl ? `${backendBaseUrl}/api/login` : '/api/login',
+  signup: backendBaseUrl ? `${backendBaseUrl}/api/register` : '/api/register',
+}
+
+function AuthFormCard({ onLoginSuccess }: AuthFormProps) {
   const [mode, setMode] = useState<AuthMode>('login')
   const [form, setForm] = useState<AuthForm>(emptyForm)
   const [message, setMessage] = useState<string | null>(null)
@@ -27,9 +41,11 @@ function AuthFormCard() {
     setForm((prev) => ({ ...prev, [field]: value }))
   }
 
-  const switchMode = (next: AuthMode) => {
+  const switchMode = (next: AuthMode, opts?: { keepMessage?: boolean }) => {
     setMode(next)
-    setMessage(null)
+    if (!opts?.keepMessage) {
+      setMessage(null)
+    }
     setForm(emptyForm)
   }
 
@@ -77,6 +93,7 @@ function AuthFormCard() {
         const successMessage =
           (body && (body.message || body.Message)) || 'Logged in successfully.'
         setMessage(successMessage)
+        onLoginSuccess?.(body, { email: form.email })
       } catch (err) {
         const fallback =
           err instanceof Error
@@ -88,14 +105,37 @@ function AuthFormCard() {
     }
 
     // Replace with a real API call to your backend for signup.
-    const url = apiRoutes[mode]
-    console.log(`Would POST to ${url}`, {
-      email: form.email,
-      password: form.password,
-      displayName: form.displayName,
-    })
-
-    setMessage('Account created (demo). Replace with real request.')
+    try {
+      setMessage('Creating account...')
+      const response = await fetch(apiRoutes.signup, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          AvatarURL: 'string',
+          DisplayName: form.displayName,
+          Email: form.email,
+          Password: form.password,
+        }),
+      })
+      if (!response.ok) {
+        const errorText = await response.text()
+        throw new Error(errorText || 'Signup failed')
+      }
+      
+      const body = await response.json().catch(() => null)
+      const successMessage =
+        (body && (body.message || body.Message)) ||
+        'Account created successfully.'
+      const finalMessage = `${successMessage} Please log in.`
+      setMessage(finalMessage)
+      switchMode('login', { keepMessage: true })
+    } catch (err) {
+      const fallback =
+        err instanceof Error
+          ? err.message
+          : 'Could not complete signup. Please try again.'
+      setMessage(fallback)
+    }
   }
 
   return (

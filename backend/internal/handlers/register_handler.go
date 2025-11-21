@@ -2,10 +2,11 @@ package handlers
 
 import (
 	"context"
-	"my-backend/internal/db"
-	"my-backend/internal/models"
 	"strings"
 	"time"
+
+	"my-backend/internal/db"
+	"my-backend/internal/models"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
@@ -70,7 +71,7 @@ func RegisterUser(c *fiber.Ctx) error {
 
 	if _, err := collection.InsertOne(ctx, user); err != nil {
 		if mongo.IsDuplicateKeyError(err) {
-			return fiber.NewError(fiber.StatusConflict, "email already registered")
+			return fiber.NewError(fiber.StatusConflict, err.Error())
 		}
 		return fiber.NewError(fiber.StatusInternalServerError, "failed to create user")
 	}
