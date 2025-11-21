@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react'
 import type { EventItem } from '../types/event'
 import type { User } from '../types/user'
@@ -41,12 +42,11 @@ function MainPage({ user: _user, email }: MainPageProps) {
     <div className="main-card">
       <p className="badge">Event Blog App</p>
       <h1>Events{email ? ` for ${email}` : ''}</h1>
-      <p className="subhead">Listing from GET /api/events.</p>
 
       <div className="event-card">
         <div className="event-header">
           <h2>Events</h2>
-          <p className="helper">Latest events from the API.</p>
+          <p className="helper">Latest events.</p>
         </div>
 
         {loading && <div className="banner">Loading events...</div>}
@@ -69,7 +69,9 @@ function MainPage({ user: _user, email }: MainPageProps) {
                     {ev.StartAt} → {ev.EndAt}
                   </p>
                 </div>
-                <p className="helper">Owner: {ev.EventOwner}</p>
+                <p className="helper">
+                  Owner: {ev.EventOwnerName || ev.EventOwner}
+                </p>
               </div>
             ))}
           </div>

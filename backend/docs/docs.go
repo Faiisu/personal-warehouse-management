@@ -333,6 +333,9 @@ const docTemplate = `{
                 "EventOwner": {
                     "type": "string"
                 },
+                "EventOwnerName": {
+                    "type": "string"
+                },
                 "Location": {
                     "type": "string"
                 },

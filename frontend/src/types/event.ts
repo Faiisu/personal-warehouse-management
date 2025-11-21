@@ -20,6 +20,7 @@ export type EventItem = {
   EndAt: string
   EventID: string
   EventOwner: string
+  EventOwnerName?: string
   Location: string
   StartAt: string
   Status: string

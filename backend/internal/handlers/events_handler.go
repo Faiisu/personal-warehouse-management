@@ -40,6 +40,29 @@ func ListEvents(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusInternalServerError, "database unavailable")
 	}
 
+	// preload users to map owner IDs to names
+	usersCol, err := db.UsersCollection(ctx)
+	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, "failed to fetch events")
+	}
+	userCursor, err := usersCol.Find(ctx, bson.D{})
+	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, "failed to fetch users")
+	}
+	defer userCursor.Close(ctx)
+
+	userDisplayNames := make(map[string]string)
+	for userCursor.Next(ctx) {
+		var u models.Users
+		if err := userCursor.Decode(&u); err != nil {
+			return fiber.NewError(fiber.StatusInternalServerError, "failed to decode users")
+		}
+		userDisplayNames[u.UserID] = u.DisplayName
+	}
+	if err := userCursor.Err(); err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, "failed to read users")
+	}
+
 	cursor, err := collection.Find(ctx, bson.D{})
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, "failed to fetch events")
@@ -49,6 +72,13 @@ func ListEvents(c *fiber.Ctx) error {
 	var events []models.Events
 	if err := cursor.All(ctx, &events); err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, "failed to decode events")
+	}
+
+	for i := range events {
+		ownerID := events[i].EventOwner.String()
+		if name, ok := userDisplayNames[ownerID]; ok {
+			events[i].EventOwnerName = name
+		}
 	}
 
 	return c.JSON(events)

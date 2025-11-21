@@ -67,7 +67,7 @@ function App() {
   const viewLabel: Record<ViewKey, string> = {
     events: 'Events',
     create: 'Create Event',
-    user: 'User',
+    user: 'Account',
   }
 
   return (
