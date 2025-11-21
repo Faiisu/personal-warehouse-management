@@ -59,6 +59,67 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/login": {
+            "post": {
+                "description": "Authenticate user by email and password.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Login user",
+                "parameters": [
+                    {
+                        "description": "Login credentials",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.loginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Users"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/register": {
             "post": {
                 "description": "Creates a new user document with a hashed password.",
@@ -87,7 +148,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "$ref": "#/definitions/models.Users"
                         }
                     },
                     "400": {
@@ -122,45 +183,50 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "handlers.registerRequest": {
+        "handlers.loginRequest": {
             "type": "object",
             "properties": {
-                "avatar_url": {
+                "Email": {
                     "type": "string"
                 },
-                "display_name": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "password": {
+                "Password": {
                     "type": "string"
                 }
             }
         },
-        "models.User": {
+        "handlers.registerRequest": {
             "type": "object",
             "properties": {
-                "avatar_url": {
+                "AvatarURL": {
                     "type": "string"
                 },
-                "created_at": {
+                "DisplayName": {
                     "type": "string"
                 },
-                "display_name": {
+                "Email": {
                     "type": "string"
                 },
-                "email": {
+                "Password": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Users": {
+            "type": "object",
+            "properties": {
+                "AvatarURL": {
                     "type": "string"
                 },
-                "id": {
+                "DisplayName": {
                     "type": "string"
                 },
-                "status": {
+                "Email": {
                     "type": "string"
                 },
-                "updated_at": {
+                "Status": {
+                    "type": "string"
+                },
+                "UserId": {
                     "type": "string"
                 }
             }

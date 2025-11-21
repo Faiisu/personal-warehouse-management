@@ -1,31 +1,34 @@
 basePath: /
 definitions:
-  handlers.registerRequest:
+  handlers.loginRequest:
     properties:
-      avatar_url:
+      Email:
         type: string
-      display_name:
-        type: string
-      email:
-        type: string
-      password:
+      Password:
         type: string
     type: object
-  models.User:
+  handlers.registerRequest:
     properties:
-      avatar_url:
+      AvatarURL:
         type: string
-      created_at:
+      DisplayName:
         type: string
-      display_name:
+      Email:
         type: string
-      email:
+      Password:
         type: string
-      id:
+    type: object
+  models.Users:
+    properties:
+      AvatarURL:
         type: string
-      status:
+      DisplayName:
         type: string
-      updated_at:
+      Email:
+        type: string
+      Status:
+        type: string
+      UserId:
         type: string
     type: object
 host: localhost:8080
@@ -64,6 +67,46 @@ paths:
       summary: Health check
       tags:
       - meta
+  /api/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate user by email and password.
+      parameters:
+      - description: Login credentials
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.loginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Users'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Login user
+      tags:
+      - users
   /api/register:
     post:
       consumes:
@@ -82,7 +125,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.User'
+            $ref: '#/definitions/models.Users'
         "400":
           description: Bad Request
           schema:

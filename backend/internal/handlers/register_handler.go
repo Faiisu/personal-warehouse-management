@@ -2,11 +2,10 @@ package handlers
 
 import (
 	"context"
-	"strings"
-	"time"
-
 	"my-backend/internal/db"
 	"my-backend/internal/models"
+	"strings"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
@@ -15,10 +14,10 @@ import (
 )
 
 type registerRequest struct {
-	Email       string `json:"email"`
-	DisplayName string `json:"display_name"`
-	Password    string `json:"password"`
-	AvatarURL   string `json:"avatar_url"`
+	Email       string `json:"Email"`
+	DisplayName string `json:"DisplayName"`
+	Password    string `json:"Password"`
+	AvatarURL   string `json:"AvatarURL"`
 }
 
 // RegisterUser godoc
@@ -28,7 +27,7 @@ type registerRequest struct {
 // @Accept       json
 // @Produce      json
 // @Param        payload  body      registerRequest  true  "User registration data"
-// @Success      201  {object}  models.User
+// @Success      201  {object}  models.Users
 // @Failure      400  {object}  map[string]string
 // @Failure      409  {object}  map[string]string
 // @Failure      500  {object}  map[string]string
@@ -60,16 +59,13 @@ func RegisterUser(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusInternalServerError, "database unavailable")
 	}
 
-	now := time.Now().UTC()
-	user := models.User{
-		ID:           uuid.New(),
+	user := models.Users{
+		UserID:       uuid.New().String(),
 		Email:        req.Email,
 		DisplayName:  req.DisplayName,
 		PasswordHash: string(hashedPassword),
 		AvatarURL:    req.AvatarURL,
 		Status:       "ACTIVE",
-		CreatedAt:    now,
-		UpdatedAt:    now,
 	}
 
 	if _, err := collection.InsertOne(ctx, user); err != nil {

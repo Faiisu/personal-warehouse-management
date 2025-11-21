@@ -20,8 +20,6 @@ var (
 	usersSetupErr  error
 )
 
-const defaultDBName = "event_blog"
-
 func getMongoURL() (string, error) {
 	url := os.Getenv("MONGO_URL")
 	if url == "" {
@@ -34,7 +32,7 @@ func dbName() string {
 	if name := os.Getenv("MONGO_DB_NAME"); name != "" {
 		return name
 	}
-	return defaultDBName
+	return os.Getenv("db_name")
 }
 
 func mongoTimeoutContext(ctx context.Context) (context.Context, context.CancelFunc) {
