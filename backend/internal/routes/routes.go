@@ -13,4 +13,9 @@ func RegisterRoutes(app *fiber.App) {
 	app.Post("/api/login", handlers.LoginUser)
 	app.Get("/api/events", handlers.ListEvents)
 	app.Post("/api/events", handlers.CreateEvent)
+	app.Get("/api/products", handlers.ListProducts)
+	app.Put("/api/products", handlers.CreateProduct)
+	app.Get("/api/stocks", handlers.ListStocks)
+	app.Post("/api/stocks", handlers.CreateStock)
+	app.Delete("/api/stocks/:stockId", handlers.DeleteStock)
 }

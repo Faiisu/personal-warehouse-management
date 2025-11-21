@@ -36,6 +36,31 @@ func APIIndex(c *fiber.Ctx) error {
 			"path":        "/api/events",
 			"description": "List events",
 		},
+		{
+			"method":      "GET",
+			"path":        "/api/products",
+			"description": "List products",
+		},
+		{
+			"method":      "PUT",
+			"path":        "/api/products",
+			"description": "Create a new product",
+		},
+		{
+			"method":      "GET",
+			"path":        "/api/stocks",
+			"description": "List stocks",
+		},
+		{
+			"method":      "POST",
+			"path":        "/api/stocks",
+			"description": "Create a stock",
+		},
+		{
+			"method":      "DELETE",
+			"path":        "/api/stocks/:stockId",
+			"description": "Delete a stock and related products",
+		},
 	}
 
 	return c.JSON(fiber.Map{

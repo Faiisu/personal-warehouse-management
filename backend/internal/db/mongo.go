@@ -131,3 +131,47 @@ func EventsCollection(ctx context.Context) (*mongo.Collection, error) {
 
 	return database.Collection("events"), nil
 }
+
+// ProductsCollection returns the products collection, creating it if missing.
+func ProductsCollection(ctx context.Context) (*mongo.Collection, error) {
+	c, err := Client(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	database := c.Database(dbName())
+
+	names, err := database.ListCollectionNames(ctx, bson.D{{Key: "name", Value: "products"}})
+	if err != nil {
+		return nil, err
+	}
+	if len(names) == 0 {
+		if err := database.CreateCollection(ctx, "products"); err != nil {
+			return nil, err
+		}
+	}
+
+	return database.Collection("products"), nil
+}
+
+// StocksCollection returns the stocks collection, creating it if missing.
+func StocksCollection(ctx context.Context) (*mongo.Collection, error) {
+	c, err := Client(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	database := c.Database(dbName())
+
+	names, err := database.ListCollectionNames(ctx, bson.D{{Key: "name", Value: "stocks"}})
+	if err != nil {
+		return nil, err
+	}
+	if len(names) == 0 {
+		if err := database.CreateCollection(ctx, "stocks"); err != nil {
+			return nil, err
+		}
+	}
+
+	return database.Collection("stocks"), nil
+}

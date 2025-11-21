@@ -141,12 +141,11 @@ function AuthFormCard({ onLoginSuccess }: AuthFormProps) {
   return (
     <div className="auth-card">
       <div className="auth-header">
-        <p className="badge">Event Blog App</p>
         <h1>{title}</h1>
         <p className="subhead">
           {mode === 'login'
-            ? 'Log in to manage your events and posts.'
-            : 'Sign up to start creating and sharing events.'}
+            ? 'Log in to manage your stocks.'
+            : ''}
         </p>
       </div>
 

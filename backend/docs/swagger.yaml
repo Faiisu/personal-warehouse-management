@@ -17,6 +17,26 @@ definitions:
       Title:
         type: string
     type: object
+  handlers.createProductRequest:
+    properties:
+      Category:
+        type: string
+      ProductName:
+        type: string
+      ProductQty:
+        type: integer
+      StockID:
+        type: string
+      Unit:
+        type: string
+    type: object
+  handlers.createStockRequest:
+    properties:
+      StockName:
+        type: string
+      UserID:
+        type: string
+    type: object
   handlers.loginRequest:
     properties:
       Email:
@@ -54,6 +74,30 @@ definitions:
       Status:
         type: string
       Title:
+        type: string
+    type: object
+  models.Products:
+    properties:
+      Category:
+        type: string
+      ProductID:
+        type: string
+      ProductName:
+        type: string
+      ProductQty:
+        type: integer
+      StockID:
+        type: string
+      Unit:
+        type: string
+    type: object
+  models.Stocks:
+    properties:
+      StockID:
+        type: string
+      StockName:
+        type: string
+      UserID:
         type: string
     type: object
   models.Users:
@@ -199,6 +243,60 @@ paths:
       summary: Login user
       tags:
       - users
+  /api/products:
+    get:
+      description: Returns all products.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Products'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List products
+      tags:
+      - products
+    put:
+      consumes:
+      - application/json
+      description: Creates a new product record.
+      parameters:
+      - description: Product data
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.createProductRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Products'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a product
+      tags:
+      - products
   /api/register:
     post:
       consumes:
@@ -239,4 +337,91 @@ paths:
       summary: Register a new user
       tags:
       - users
+  /api/stocks:
+    get:
+      description: Returns all stocks.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Stocks'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List stocks
+      tags:
+      - stocks
+    post:
+      consumes:
+      - application/json
+      description: Creates a new stock record.
+      parameters:
+      - description: Stock data
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.createStockRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Stocks'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a stock
+      tags:
+      - stocks
+  /api/stocks/{stockId}:
+    delete:
+      description: Deletes a stock by ID and removes related products with the same
+        StockID.
+      parameters:
+      - description: Stock ID (UUID)
+        in: path
+        name: stockId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete a stock
+      tags:
+      - stocks
 swagger: "2.0"

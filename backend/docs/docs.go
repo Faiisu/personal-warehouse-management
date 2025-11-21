@@ -202,6 +202,88 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/products": {
+            "get": {
+                "description": "Returns all products.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "products"
+                ],
+                "summary": "List products",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Products"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Creates a new product record.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "products"
+                ],
+                "summary": "Create a product",
+                "parameters": [
+                    {
+                        "description": "Product data",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.createProductRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.Products"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/register": {
             "post": {
                 "description": "Creates a new user document with a hashed password.",
@@ -262,6 +344,136 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/api/stocks": {
+            "get": {
+                "description": "Returns all stocks.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stocks"
+                ],
+                "summary": "List stocks",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Stocks"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Creates a new stock record.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stocks"
+                ],
+                "summary": "Create a stock",
+                "parameters": [
+                    {
+                        "description": "Stock data",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.createStockRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.Stocks"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/stocks/{stockId}": {
+            "delete": {
+                "description": "Deletes a stock by ID and removes related products with the same StockID.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stocks"
+                ],
+                "summary": "Delete a stock",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Stock ID (UUID)",
+                        "name": "stockId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -286,6 +498,37 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "Title": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.createProductRequest": {
+            "type": "object",
+            "properties": {
+                "Category": {
+                    "type": "string"
+                },
+                "ProductName": {
+                    "type": "string"
+                },
+                "ProductQty": {
+                    "type": "integer"
+                },
+                "StockID": {
+                    "type": "string"
+                },
+                "Unit": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.createStockRequest": {
+            "type": "object",
+            "properties": {
+                "StockName": {
+                    "type": "string"
+                },
+                "UserID": {
                     "type": "string"
                 }
             }
@@ -346,6 +589,43 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "Title": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Products": {
+            "type": "object",
+            "properties": {
+                "Category": {
+                    "type": "string"
+                },
+                "ProductID": {
+                    "type": "string"
+                },
+                "ProductName": {
+                    "type": "string"
+                },
+                "ProductQty": {
+                    "type": "integer"
+                },
+                "StockID": {
+                    "type": "string"
+                },
+                "Unit": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Stocks": {
+            "type": "object",
+            "properties": {
+                "StockID": {
+                    "type": "string"
+                },
+                "StockName": {
+                    "type": "string"
+                },
+                "UserID": {
                     "type": "string"
                 }
             }
