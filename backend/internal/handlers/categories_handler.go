@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -12,6 +13,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type categoryRequest struct {
@@ -124,4 +126,66 @@ func CreateCategories(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(categories)
+}
+
+// DeleteCategory godoc
+// @Summary      Delete a category
+// @Description  Sets Category to null on related products (matching StockID and category name) then deletes the category document.
+// @Tags         categories
+// @Produce      json
+// @Param        categoryId  path  string  true  "Category ID (UUID)"
+// @Success      200  {object}  map[string]interface{}
+// @Failure      400  {object}  map[string]string
+// @Failure      404  {object}  map[string]string
+// @Failure      500  {object}  map[string]string
+// @Router       /api/categories/{categoryId} [delete]
+func DeleteCategory(c *fiber.Ctx) error {
+	categoryIDParam := strings.TrimSpace(c.Params("categoryId"))
+	if categoryIDParam == "" {
+		return fiber.NewError(fiber.StatusBadRequest, "categoryId is required")
+	}
+
+	categoryUUID, err := uuid.Parse(categoryIDParam)
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, "categoryId must be a valid UUID")
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	categoriesCol, err := db.CategoriesCollection(ctx)
+	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, "database unavailable")
+	}
+	productsCol, err := db.ProductsCollection(ctx)
+	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, "database unavailable")
+	}
+
+	var category models.Categories
+	if err := categoriesCol.FindOne(ctx, bson.M{"CategoryID": categoryUUID}).Decode(&category); err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return fiber.NewError(fiber.StatusNotFound, "category not found")
+		}
+		return fiber.NewError(fiber.StatusInternalServerError, "failed to fetch category")
+	}
+
+	updateRes, err := productsCol.UpdateMany(
+		ctx,
+		bson.M{"StockID": category.StockID, "Category": category.CategoryName},
+		bson.M{"$set": bson.M{"Category": nil}},
+	)
+	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, "failed to update related products")
+	}
+
+	deleteRes, err := categoriesCol.DeleteOne(ctx, bson.M{"CategoryID": categoryUUID})
+	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, "failed to delete category")
+	}
+
+	return c.JSON(fiber.Map{
+		"updated_products": updateRes.ModifiedCount,
+		"deleted_category": deleteRes.DeletedCount,
+	})
 }

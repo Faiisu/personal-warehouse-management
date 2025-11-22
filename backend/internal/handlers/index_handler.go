@@ -76,6 +76,11 @@ func APIIndex(c *fiber.Ctx) error {
 			"path":        "/api/categories",
 			"description": "Create categories in bulk",
 		},
+		{
+			"method":      "DELETE",
+			"path":        "/api/categories/:categoryId",
+			"description": "Delete a category and null out related product category references",
+		},
 	}
 
 	return c.JSON(fiber.Map{

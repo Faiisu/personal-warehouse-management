@@ -186,6 +186,45 @@ paths:
       summary: Bulk create categories
       tags:
       - categories
+  /api/categories/{categoryId}:
+    delete:
+      description: Sets Category to null on related products (matching StockID and
+        category name) then deletes the category document.
+      parameters:
+      - description: Category ID (UUID)
+        in: path
+        name: categoryId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete a category
+      tags:
+      - categories
   /api/health:
     get:
       description: Returns the current status of the API.
