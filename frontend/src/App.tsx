@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import './App.css'
 import AuthFormCard from './components/AuthForm'
 import UserPage from './components/UserPage'
@@ -9,7 +9,7 @@ import type { User } from './types/user'
 
 const LOCAL_STORAGE_USER_KEY = 'authUser'
 
-type ViewKey = 'events' | 'create' | 'stocks' | 'user'
+type ViewKey = 'stocks' | 'user'
 
 function App() {
   const pathname =
@@ -108,9 +108,10 @@ function App() {
   }, [isAuthenticated, normalizedPath, hydrated])
 
   const handleLoginSuccess = (
-    loggedInUser?: User,
+    data?: unknown,
     context?: { email: string },
   ) => {
+    const loggedInUser = data as User | undefined
     setIsAuthenticated(true)
     setUser(loggedInUser)
     const email = loggedInUser?.Email ?? context?.email
@@ -134,7 +135,7 @@ function App() {
     setUserEmail(undefined)
     setUser(undefined)
     localStorage.removeItem(LOCAL_STORAGE_USER_KEY)
-    setActiveView('events')
+    setActiveView('stocks')
   }
 
   if (!isAuthenticated) {
@@ -161,7 +162,8 @@ function App() {
     user: 'Account',
   }
 
-  let mainContent: JSX.Element
+  let mainContent: ReactNode
+
   if (isAdminRoute) {
     mainContent = (
       <AdminDashboard user={user} email={userEmail} onLogout={handleLogout} />

@@ -36,6 +36,7 @@ function UserPage({ user, emailFallback }: UserPageProps) {
         </div>
         <div className="profile-meta">
           <h1 className="profile-name">{displayName}</h1>
+          <p className='helper'>email: {email}</p>
           <p className='helper'>user-id: {userId}</p>         
           <div className="profile-pills">
             <span
