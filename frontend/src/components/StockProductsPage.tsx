@@ -387,7 +387,7 @@ function StockProductsPage({ stockName, onBack }: StockProductsPageProps) {
       <div className="main-actions">
         {onBack && (
           <button type="button" className="outline" onClick={onBack}>
-            Back to stocks
+            Back to stock list
           </button>
         )}
       </div>

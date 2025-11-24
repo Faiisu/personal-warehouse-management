@@ -224,11 +224,11 @@ function StockPage({ user }: StockPageProps) {
 
   return (
     <div className="main-card">
-      <h1>Manage stocks</h1>
+      <h1>Manage stock</h1>
 
       <div className="stat-grid">
         <div className="stat-card blue">
-          <p className="stat-label">My stocks</p>
+          <p className="stat-label">My stock list</p>
           <p className="stat-value">{visibleStocks.length}</p>
         </div>
         
@@ -266,14 +266,14 @@ function StockPage({ user }: StockPageProps) {
 
       <div className="event-card" style={{ marginTop: 16 }}>
         <div className="event-header">
-          <h2>Your stocks</h2>
+          <h2>Your stock</h2>
         </div>
 
-        {loading && <div>Loading stocks...</div>}
+        {loading && <div>Loading stock...</div>}
         {error && <div className="banner error">{error}</div>}
 
         {!loading && !error && visibleStocks.length === 0 && (
-          <p className="subhead">No stocks yet.</p>
+          <p className="subhead">No stock yet.</p>
         )}
 
         {!loading && !error && visibleStocks.length > 0 && (
