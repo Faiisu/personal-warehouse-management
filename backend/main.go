@@ -34,10 +34,10 @@ func main() {
 	app.Use(logger.New())
 	app.Use(cors.New(cors.Config{
 
-		AllowOrigins: "http://167.71.218.173:3000/",
+		AllowOrigins: "http://167.71.218.173:3000/, http://localhost:5173, http://localhost:3000",
 
-		AllowMethods: "GET, POST, PUT, DELETE, OPTIONS",
-		AllowHeaders: "Origin, Content-Type, Accept, Authorization",
+		AllowMethods:     "GET, POST, PUT, DELETE, OPTIONS",
+		AllowHeaders:     "Origin, Content-Type, Accept, Authorization",
 		AllowCredentials: true,
 	}))
 

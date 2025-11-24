@@ -116,7 +116,7 @@ function AuthFormCard({ onLoginSuccess }: AuthFormProps) {
           Email: form.email,
           Password: form.password,
         }),
-      })
+      })    
       if (!response.ok) {
         const errorText = await response.text()
         throw new Error(errorText || 'Signup failed')
