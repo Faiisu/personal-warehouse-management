@@ -9,7 +9,7 @@ import type { User } from './types/user'
 
 const LOCAL_STORAGE_USER_KEY = 'authUser'
 
-type ViewKey = 'warehouse' | 'user'
+type ViewKey = 'warehouse'| 'user' | 'internal_transfer'
 
 function App() {
   const pathname =
@@ -160,6 +160,7 @@ function App() {
   const viewLabel: Record<ViewKey, string> = {
     warehouse: 'Warehouse',
     user: 'Account',
+    internal_transfer: 'Internal transfer',
   }
 
   let mainContent: ReactNode
@@ -181,11 +182,14 @@ function App() {
   } else {
     mainContent = <StockPage user={user} />
   }
+
   const handleNav = (view: ViewKey) => {
     if (view === 'user') {
       window.location.assign('/account')
     } else if (view === 'warehouse') {
       window.location.assign('/warehouse')
+    } else if (view == 'internal_transfer'){
+      window.location.assign('/transfer')
     }
     setActiveView(view)
   }

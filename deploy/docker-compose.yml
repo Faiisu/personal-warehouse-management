@@ -10,7 +10,7 @@ services:
       - .env
     environment:
       MONGO_URL: ${MONGO_URL:-mongodb://mongo:27017}
-      MONGO_DB_NAME: ${MONGO_DB_NAME:-event_hub}
+      MONGO_DB_NAME: ${MONGO_DB_NAME:-personal_stock_manage}
     ports:
       - "${BACKEND_PORT:-8080}:8080"
     restart: unless-stopped
